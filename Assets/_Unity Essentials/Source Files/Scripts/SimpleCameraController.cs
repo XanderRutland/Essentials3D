@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SimpleCameraController : MonoBehaviour
 {
@@ -8,20 +7,11 @@ public class SimpleCameraController : MonoBehaviour
     public float rotationSpeed = 100.0f;      // Rotation speed for A/D keys in degrees per second
     public float mouseSensitivity = 1.0f;    // Mouse look sensitivity
 
-    public InputAction moveAction;
-    public InputAction lookAction;
-
     private float rotationX = 0.0f;          // Rotation around the X axis (up and down look)
-
-    private void OnEnable()
-    {
-        moveAction.Enable();
-        lookAction.Enable();
-    }
 
     void Update()
     {
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         
         // Movement
         float moveForward = moveInput.y * moveSpeed * Time.deltaTime;
@@ -29,12 +19,13 @@ public class SimpleCameraController : MonoBehaviour
         Vector3 moveDirection = new Vector3(transform.forward.x, 0.0f, transform.forward.z).normalized;
         transform.Translate(moveDirection * moveForward, Space.World);
 
+        // Mouse Look
+        float mouseY = Input.mousePositionDelta.x * mouseSensitivity;
         // Rotation
         float turn = moveInput.x * rotationSpeed * Time.deltaTime;
         transform.Rotate(0, turn, 0, Space.World); // Rotate around the global Y axis
-
-        // Mouse Look
-        float mouseY = lookAction.ReadValue<float>() * mouseSensitivity;
+        
+        
 
         rotationX -= mouseY;  // Subtracting to invert the up and down look
         rotationX = Mathf.Clamp(rotationX, -90f, 90f);  // Clamp the up and down look to avoid flipping
@@ -42,9 +33,4 @@ public class SimpleCameraController : MonoBehaviour
         transform.localEulerAngles = new Vector3(rotationX, transform.localEulerAngles.y, 0);
     }
     
-    private void OnDisable()
-    {
-        moveAction.Disable();
-        lookAction.Disable();
-    }
 }

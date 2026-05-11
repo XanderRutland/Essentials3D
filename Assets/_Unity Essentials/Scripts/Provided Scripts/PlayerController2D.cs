@@ -1,24 +1,17 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerController2D : MonoBehaviour
 {
     // Public variables
     public float speed = 5f; // The speed at which the player moves
     public bool canMoveDiagonally = true; // Controls whether the player can move diagonally
-    
-    public InputActionReference moveAction;
 
     // Private variables 
     private Rigidbody2D rb; // Reference to the Rigidbody2D component attached to the player
     private Vector2 movement; // Stores the direction of player movement
     private bool isMovingHorizontally = true; // Flag to track if the player is moving horizontally
 
-    private void OnEnable()
-    {
-        moveAction.action.Enable();
-    }
 
     void Start()
     {
@@ -31,8 +24,8 @@ public class PlayerController2D : MonoBehaviour
     void Update()
     {
         // Get player input from keyboard or controller
-        Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
-        
+        Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
         float horizontalInput = moveInput.x;
         float verticalInput = moveInput.y;
 
@@ -87,8 +80,4 @@ public class PlayerController2D : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    private void OnDisable()
-    {
-        moveAction.action.Disable();
-    }
 }
